@@ -35,3 +35,4 @@ with open(args.output, 'w', newline='', encoding='utf-8') as csvfile:
             'Name': clean_html_tags(issue.find('name').text if issue.find('name') is not None else ''),
             'Issue Background': clean_html_tags(issue.find('issueBackground').text if issue.find('issueBackground') is not None else ''),
             'Remediation Background': clean_html_tags(issue.find('remediationBackground').text if issue.find('remediationBackground') is not None else '')
+        })
