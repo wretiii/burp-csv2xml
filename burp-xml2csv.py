@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ET
+from lxml import etree
 import csv
 import argparse
 import re
@@ -10,10 +10,12 @@ parser.add_argument('-o', '--output', required=True, help='Output CSV file')
 args = parser.parse_args()
 
 def clean_html_tags(text):
+    """Remove HTML tags from a string."""
     return re.sub('<[^<]+?>', '', text) if text else ''
 
-# Parse the XML file
-tree = ET.parse(args.input)
+# Preprocess and parse the XML content
+parser = etree.XMLParser(recover=True)  # Use recover mode to parse malformed XML
+tree = etree.parse(args.input, parser)
 root = tree.getroot()
 
 # Open the CSV file for writing
@@ -27,7 +29,7 @@ with open(args.output, 'w', newline='', encoding='utf-8') as csvfile:
         path = clean_html_tags(issue.find('path').text if issue.find('path') is not None else '')
         full_path = f"{host}{path}"
         writer.writerow({
-            'Severity': issue.find('severity').text,
+            'Severity': issue.find('severity').text if issue.find('severity') is not None else '',
             'Host': host,
             'Path': path,
             'Full Path': full_path,
